@@ -17,7 +17,7 @@ describe("Assumption", function() {
 
 	beforeEach(testHelper.before);
 	afterEach(function(done) {
-		if(watcherToClose) {
+		if (watcherToClose) {
 			watcherToClose.close();
 			watcherToClose = null;
 		}
@@ -40,14 +40,14 @@ describe("Assumption", function() {
 			var after = Date.now();
 			var s = fs.statSync(path.join(fixtures, "a"));
 			var diffBefore = +s.mtime - before;
-			if(diffBefore < minDiffBefore) minDiffBefore = diffBefore;
-			if(diffBefore > maxDiffBefore) maxDiffBefore = diffBefore;
+			if (diffBefore < minDiffBefore) minDiffBefore = diffBefore;
+			if (diffBefore > maxDiffBefore) maxDiffBefore = diffBefore;
 			sumDiffBefore += diffBefore;
 			var diffAfter = +s.mtime - after;
-			if(diffAfter < minDiffAfter) minDiffAfter = diffAfter;
-			if(diffAfter > maxDiffAfter) maxDiffAfter = diffAfter;
+			if (diffAfter < minDiffAfter) minDiffAfter = diffAfter;
+			if (diffAfter > maxDiffAfter) maxDiffAfter = diffAfter;
 			sumDiffAfter += diffAfter;
-			if(i-- === 0) {
+			if (i-- === 0) {
 				afterMeasure();
 			} else {
 				testHelper.tick(100, checkMtime);
@@ -78,7 +78,7 @@ describe("Assumption", function() {
 		var minDiffAfter = +Infinity;
 		var maxDiffAfter = -Infinity;
 		var sumDiffAfter = 0;
-		var watcher = watcherToClose = chokidar.watch(fixtures, {
+		var watcher = (watcherToClose = chokidar.watch(fixtures, {
 			ignoreInitial: true,
 			persistent: true,
 			followSymlinks: false,
@@ -86,20 +86,20 @@ describe("Assumption", function() {
 			atomic: false,
 			alwaysStat: true,
 			ignorePermissionErrors: true
-		});
+		}));
 		testHelper.tick(100, function() {
 			watcher.on("change", function(path, s) {
-				if(before && after) {
+				if (before && after) {
 					var diffBefore = +s.mtime - before;
-					if(diffBefore < minDiffBefore) minDiffBefore = diffBefore;
-					if(diffBefore > maxDiffBefore) maxDiffBefore = diffBefore;
+					if (diffBefore < minDiffBefore) minDiffBefore = diffBefore;
+					if (diffBefore > maxDiffBefore) maxDiffBefore = diffBefore;
 					sumDiffBefore += diffBefore;
 					var diffAfter = +s.mtime - after;
-					if(diffAfter < minDiffAfter) minDiffAfter = diffAfter;
-					if(diffAfter > maxDiffAfter) maxDiffAfter = diffAfter;
+					if (diffAfter < minDiffAfter) minDiffAfter = diffAfter;
+					if (diffAfter > maxDiffAfter) maxDiffAfter = diffAfter;
 					sumDiffAfter += diffAfter;
 					before = after = undefined;
-					if(i-- === 0) {
+					if (i-- === 0) {
 						afterMeasure();
 					} else {
 						testHelper.tick(100, checkMtime);
@@ -128,7 +128,7 @@ describe("Assumption", function() {
 
 	it("should not fire events in subdirectories", function(done) {
 		testHelper.dir("watch-test-directory");
-		var watcher = watcherToClose = chokidar.watch(fixtures, {
+		var watcher = (watcherToClose = chokidar.watch(fixtures, {
 			ignoreInitial: true,
 			persistent: true,
 			followSymlinks: false,
@@ -136,7 +136,7 @@ describe("Assumption", function() {
 			atomic: false,
 			alwaysStat: true,
 			ignorePermissionErrors: true
-		});
+		}));
 		watcher.on("add", function(arg) {
 			done(new Error("should not be emitted " + arg));
 			done = function() {};
@@ -161,7 +161,7 @@ describe("Assumption", function() {
 		it("should fire events not after start and " + delay + "ms delay", function(done) {
 			testHelper.file("watch-test-file-" + delay);
 			testHelper.tick(delay, function() {
-				var watcher = watcherToClose = chokidar.watch(fixtures, {
+				var watcher = (watcherToClose = chokidar.watch(fixtures, {
 					ignoreInitial: true,
 					persistent: true,
 					followSymlinks: false,
@@ -169,7 +169,7 @@ describe("Assumption", function() {
 					atomic: false,
 					alwaysStat: true,
 					ignorePermissionErrors: true
-				});
+				}));
 				watcher.on("add", function(arg) {
 					done(new Error("should not be emitted " + arg));
 					done = function() {};
