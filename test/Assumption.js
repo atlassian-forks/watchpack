@@ -4,7 +4,7 @@
 require("should");
 var path = require("path");
 var fs = require("fs");
-var chokidar = require("chokidar");
+var sane = require("sane");
 var TestHelper = require("./helpers/TestHelper");
 var Watchpack = require("../lib/watchpack");
 
@@ -65,7 +65,7 @@ describe("Assumption", function() {
 		}
 	});
 
-	it("should have a file system with correct mtime behavior (chokidar)", function(done) {
+	it("should have a file system with correct mtime behavior (sane)", function(done) {
 		this.timeout(20000);
 		testHelper.file("a");
 		var i = 60;
@@ -78,15 +78,7 @@ describe("Assumption", function() {
 		var minDiffAfter = +Infinity;
 		var maxDiffAfter = -Infinity;
 		var sumDiffAfter = 0;
-		var watcher = (watcherToClose = chokidar.watch(fixtures, {
-			ignoreInitial: true,
-			persistent: true,
-			followSymlinks: false,
-			depth: 0,
-			atomic: false,
-			alwaysStat: true,
-			ignorePermissionErrors: true
-		}));
+		var watcher = (watcherToClose = sane(fixtures));
 		testHelper.tick(100, function() {
 			watcher.on("change", function(path, s) {
 				if (before && after) {
@@ -116,8 +108,8 @@ describe("Assumption", function() {
 		}
 
 		function afterMeasure() {
-			console.log("mtime chokidar accuracy (before): [" + minDiffBefore + " ; " + maxDiffBefore + "] avg " + Math.round(sumDiffBefore / count));
-			console.log("mtime chokidar accuracy (after): [" + minDiffAfter + " ; " + maxDiffAfter + "] avg " + Math.round(sumDiffAfter / count));
+			console.log("mtime sane accuracy (before): [" + minDiffBefore + " ; " + maxDiffBefore + "] avg " + Math.round(sumDiffBefore / count));
+			console.log("mtime sane accuracy (after): [" + minDiffAfter + " ; " + maxDiffAfter + "] avg " + Math.round(sumDiffAfter / count));
 			minDiffBefore.should.be.aboveOrEqual(-2000);
 			maxDiffBefore.should.be.below(2000);
 			minDiffAfter.should.be.aboveOrEqual(-2000);
@@ -128,15 +120,7 @@ describe("Assumption", function() {
 
 	it("should not fire events in subdirectories", function(done) {
 		testHelper.dir("watch-test-directory");
-		var watcher = (watcherToClose = chokidar.watch(fixtures, {
-			ignoreInitial: true,
-			persistent: true,
-			followSymlinks: false,
-			depth: 0,
-			atomic: false,
-			alwaysStat: true,
-			ignorePermissionErrors: true
-		}));
+		var watcher = (watcherToClose = sane(fixtures));
 		watcher.on("add", function(arg) {
 			done(new Error("should not be emitted " + arg));
 			done = function() {};
@@ -161,15 +145,7 @@ describe("Assumption", function() {
 		it("should fire events not after start and " + delay + "ms delay", function(done) {
 			testHelper.file("watch-test-file-" + delay);
 			testHelper.tick(delay, function() {
-				var watcher = (watcherToClose = chokidar.watch(fixtures, {
-					ignoreInitial: true,
-					persistent: true,
-					followSymlinks: false,
-					depth: 0,
-					atomic: false,
-					alwaysStat: true,
-					ignorePermissionErrors: true
-				}));
+				var watcher = (watcherToClose = sane(fixtures));
 				watcher.on("add", function(arg) {
 					done(new Error("should not be emitted " + arg));
 					done = function() {};
